@@ -1,0 +1,19 @@
+# Starter environment; validate against imports in the current project scripts.
+# After testing, export a pinned environment for the OS/platform used in analysis.
+name: alphagenome-env
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.11
+  - pip
+  - numpy
+  - pandas
+  - matplotlib
+  - pybigwig
+  - bedtools
+  - tqdm
+  - pip:
+      - alphagenome
+      - pyfaidx
