@@ -2,19 +2,19 @@
 step 4A: AlphaGenome ATAC pilot + track inventory (with local hg38 sequence saved)
 
 Input:
-- benchmarks_10000.bed
-- hg38.chrom.sizes.form_bw.txt
+- benchmark_10000.bed
+- hg38.chrom.sizes.from_bw.txt
 - local hg38 FASTA (UCSC chr naming)
 - AlphaGenome API key from env : ALPHA_GENOME_API_KEY or ALPHAGENOME_API_KEY
 
-output (in 1_data_raw/3_alphagenome/):
+Output (in 1_data_raw/3_alphagenome/):
 - pilot_interval.json
-- pilot_sequences.fa
+- pilot_sequence.fa
 - pilot_atac_track_metadata.csv
-- pilot-atac_track_scores.csv
-- pilot_fibroblast_candidates_tracks.csv
+- pilot_atac_track_scores.csv
+- pilot_fibroblast_candidate_tracks.csv
 - step4A_alphagenome_atac_pilot.done.txt
-- logs/steps4A_*.log
+- logs/step4A_*.log
 """
 
 #----------------------Imports-----------------------------#
@@ -33,16 +33,18 @@ from alphagenome.data import genome
 IN_DIR = "/home/ibab/1_POJECTS/Telos_NGS_Project/1_data_raw"
 
 BENCHMARK_DIR = os.path.join(IN_DIR, "2_benchmark")
-OUT_DIR = os.path.join(IN_DIR, "3_alphagenome")
+
+AG_BASE_DIR = os.path.join(IN_DIR, "3_alphagenome")
+OUT_DIR = os.path.join(AG_BASE_DIR, "00_pilot")
 LOG_DIR = os.path.join(OUT_DIR, "logs")
 
 BENCH_BED = os.path.join(BENCHMARK_DIR, "benchmark_10000.bed")
 CHROM_SIZES = os.path.join(BENCHMARK_DIR, "hg38.chrom.sizes.from_bw.txt")
 
 HG38_FASTA = os.path.join(IN_DIR, "0_reference/hg38/hg38.fa")
-
+#-----------------------------------------------------------#
 PILOT_LABEL = "RS_gained"
-SEQUENCE_LENGTH = 16384  # keep small for pilot; can change later
+SEQUENCE_LENGTH = 16384  # pilot context
 
 METADATA_CSV   = os.path.join(OUT_DIR, "pilot_atac_track_metadata.csv")
 SCORES_CSV     = os.path.join(OUT_DIR, "pilot_atac_track_scores.csv")
@@ -88,17 +90,12 @@ def make_centered_interval(chrom, peak_start, peak_end, chrom_length, seq_len):
     return int(start), int(end)
 
 def find_atac_output_type():
-    """
-    Be robust to small naming changes in OutputType.
-    """
     OT = dna_client.OutputType
     for name in ["ATAC", "ATAC_SEQ", "ATACSEQ"]:
         if hasattr(OT, name):
             return getattr(OT, name)
-    # show what exists
     avail = [x for x in dir(OT) if x.isupper()]
     raise RuntimeError(f"Could not find ATAC OutputType. Available: {avail}")
-
 
 def metadata_to_df(metadata):
     if isinstance(metadata, pd.DataFrame):
@@ -112,7 +109,6 @@ def metadata_to_df(metadata):
         return pd.DataFrame(rows)
     return pd.DataFrame(metadata)
 
-
 def orient_values(values, n_tracks):
     v = np.asarray(values)
     v = np.squeeze(v)
@@ -120,10 +116,10 @@ def orient_values(values, n_tracks):
     if v.ndim != 2:
         raise ValueError(f"ATAC values should be 2D; got shape {v.shape}")
 
-    # expected: positions x tracks
+    # positions x tracks
     if v.shape[1] == n_tracks:
         return v
-    # alternative: tracks x positions
+    # tracks x positions
     if v.shape[0] == n_tracks:
         return v.T
 
@@ -132,9 +128,10 @@ def orient_values(values, n_tracks):
 
 def main():
     os.makedirs(OUT_DIR, exist_ok=True)
+    os.makedirs(LOG_DIR, exist_ok=True)
     logger, log_path = setup_logger("step4A_alphagenome_atac_pilot", LOG_DIR)
 
-    # ---- sanity checks
+    # sanity checks
     for p in [BENCH_BED, CHROM_SIZES, HG38_FASTA]:
         if not os.path.exists(p):
             raise FileNotFoundError(p)
@@ -142,9 +139,10 @@ def main():
     api_key = get_api_key()
     logger.info("API key detected: YES (will not be printed)")
 
-    # ---- load benchmark + choose pilot region
-    bench = pd.read_csv(BENCH_BED, sep="\t", header=None,
-                        names=["chr","start","end","name","label"])
+    bench = pd.read_csv(
+        BENCH_BED, sep="\t", header=None,
+        names=["chr","start","end","name","label"]
+    )
     pool = bench[bench["label"] == PILOT_LABEL]
     if pool.empty:
         raise RuntimeError(f"No region found with label={PILOT_LABEL}")
@@ -159,33 +157,35 @@ def main():
         chrom, pilot["start"], pilot["end"], chrom_sizes[chrom], SEQUENCE_LENGTH
     )
 
-    # ---- extract local hg38 sequence for this interval (for reuse / other models)
+    # local sequence save (for other models)
     ref = Fasta(HG38_FASTA, rebuild=False)
     seq = str(ref[chrom][context_start:context_end]).upper()
-
     with open(PILOT_FASTA, "w") as f:
         f.write(f">{chrom}:{context_start}-{context_end}\n")
         for i in range(0, len(seq), 80):
             f.write(seq[i:i+80] + "\n")
-
     logger.info(f"Wrote pilot local sequence FASTA: {PILOT_FASTA}")
 
-    # ---- AlphaGenome interval object
-    interval = genome.Interval(chromosome=str(chrom), start=int(context_start), end=int(context_end))
+    interval = genome.Interval(
+        chromosome=str(chrom),
+        start=int(context_start),
+        end=int(context_end)
+    )
     logger.info(f"Pilot peak: {chrom}:{pilot['start']}-{pilot['end']} ({pilot['name']})")
     logger.info(f"AlphaGenome interval: {chrom}:{context_start}-{context_end} (len={SEQUENCE_LENGTH})")
 
-    # ---- run AlphaGenome prediction
     atac_output = find_atac_output_type()
     model = dna_client.create(api_key)
 
-    if not hasattr(model, "predict_interval"):
-        raise RuntimeError("AlphaGenome client missing predict_interval(). Check alphagenome version/API.")
-
-    output = model.predict_interval(interval=interval, requested_outputs=[atac_output])
+    # IMPORTANT: ontology_terms is required; pass None for pilot
+    output = model.predict_interval(
+        interval=interval,
+        requested_outputs=[atac_output],
+        ontology_terms=None
+    )
 
     if not hasattr(output, "atac") or output.atac is None:
-        raise RuntimeError("AlphaGenome response has no 'atac' field. Inspect output object / API changes.")
+        raise RuntimeError("AlphaGenome response has no 'atac' field.")
 
     atac = output.atac
     meta = metadata_to_df(atac.metadata)
@@ -195,12 +195,11 @@ def main():
     logger.info(f"ATAC metadata rows: {meta.shape[0]}")
     logger.info("Metadata columns: " + ", ".join(map(str, meta.columns)))
 
-    # ---- score predicted ATAC over the original peak span (within the SEQUENCE_LENGTH context)
+    # score predicted ATAC over the original peak span
     n_pos = vals.shape[0]
     rel_start = int(pilot["start"]) - context_start
     rel_end   = int(pilot["end"]) - context_start
 
-    # convert bp coordinates -> bins in predicted array
     first_bin = int(np.floor(rel_start * n_pos / SEQUENCE_LENGTH))
     last_bin  = int(np.ceil(rel_end   * n_pos / SEQUENCE_LENGTH))
     first_bin = max(0, first_bin)
@@ -214,18 +213,16 @@ def main():
 
     meta.to_csv(METADATA_CSV, index=False)
     meta.to_csv(SCORES_CSV, index=False)
-
     logger.info(f"Wrote: {METADATA_CSV}")
     logger.info(f"Wrote: {SCORES_CSV}")
 
-    # ---- simple candidate filtering by metadata text search
+    # candidate track filtering (depends on metadata fields; this is text-based and robust)
     text = meta.astype(str).agg(" | ".join, axis=1)
     pattern = r"WI[- ]?38|fibroblast|IMR[- ]?90|HFF|lung"
     candidates = meta[text.str.contains(pattern, case=False, regex=True, na=False)].copy()
     candidates.to_csv(CANDIDATES_CSV, index=False)
     logger.info(f"Candidate fibroblast/lung tracks: {len(candidates)} -> {CANDIDATES_CSV}")
 
-    # ---- write interval manifest
     manifest = {
         "benchmark_name": str(pilot["name"]),
         "benchmark_label": str(pilot["label"]),
@@ -240,7 +237,6 @@ def main():
         json.dump(manifest, f, indent=2)
     logger.info(f"Wrote: {INTERVAL_JSON}")
 
-    # ---- done marker
     done_text = (
         "SUCCESS\n"
         f"PILOT_PEAK={manifest['peak']}\n"
@@ -256,7 +252,6 @@ def main():
     write_done_marker(DONE_MARKER, done_text)
     logger.info(f"Wrote DONE marker: {DONE_MARKER}")
     logger.info("STEP 4A COMPLETE")
-
 
 if __name__ == "__main__":
     main()
