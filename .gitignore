@@ -73,3 +73,9 @@ conda-bld/
 *.swo
 *.swx
 .*.sw?
+
+# Local datasets and analysis outputs — do not push
+/1_data_raw/
+
+# Original dataset if accidentally placed in the repo root
+/GSE175533_hTERT.RS.RIS.CD.TPM_table.xlsx
