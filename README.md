@@ -70,3 +70,46 @@ The benchmark includes shuffled negative regions outside the atlas. These may be
 ## Sources and citations
 
 The project uses the GSE175533 study and a local UCSC hg38 reference. Keep DOI/accession, sample mapping, data-use notes, and publication citations in the documentation. Do not commit copies of downloaded papers unless the license expressly permits redistribution.
+
+## Generated Visualizations
+
+The following figures are exploratory outputs from the WI-38
+young-versus-replicative-senescence RNA-seq analysis.
+
+### RNA-seq figures
+
+**Volcano plot**
+
+![RNA-seq volcano plot](reports/visualizations/static/volcano_plot.png)
+
+[Open the volcano plot PDF](reports/visualizations/static/volcano_plot.pdf)
+
+**Expression heatmap: top 100 genes**
+
+![RNA-seq heatmap](reports/visualizations/static/heatmap_top100_genes.png)
+
+[Open the heatmap PDF](reports/visualizations/static/heatmap_top100_genes.pdf)
+
+**Principal component analysis**
+
+![RNA-seq PCA plot](reports/visualizations/static/pca_young_vs_rs.png)
+
+[Open the PCA plot PDF](reports/visualizations/static/pca_young_vs_rs.pdf)
+
+### Interactive plots
+
+The interactive HTML reports are available in
+[reports/visualizations/interactive](reports/visualizations/interactive/).
+
+- [Interactive volcano plot](reports/visualizations/interactive/volcano_interactive.html)
+- [Interactive heatmap](reports/visualizations/interactive/heatmap_interactive.html)
+- [Interactive PCA](reports/visualizations/interactive/pca_interactive.html)
+
+### AlphaGenome locus visualizations
+
+Candidate-gene locus plots are available in
+[reports/visualizations/alphagenome_locus_plots](reports/visualizations/alphagenome_locus_plots/).
+
+These figures are generated analysis outputs. The static plots are
+exploratory and should not be interpreted as definitive differential-
+expression evidence without supporting statistical analysis.

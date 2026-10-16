@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WI-38 interactive RNA-seq explorer</title>
+<style>
+body{font:16px/1.55 system-ui,-apple-system,Segoe UI,sans-serif;max-width:1050px;margin:40px auto;padding:0 22px;color:#202124}
+h1{line-height:1.2} h2{margin-top:1.7em} .links a{display:inline-block;margin:8px 10px 8px 0;padding:10px 13px;border:1px solid #c9cdd2;border-radius:8px;color:#174ea6;text-decoration:none}
+.note{border-left:4px solid #777;padding:8px 16px;background:#f7f7f7} code{background:#f2f2f2;padding:2px 4px}
+</style></head><body>
+<h1>WI-38 RNA-seq: interactive plot explorer</h1>
+<p>Open a plot, then hover over points or heatmap cells for gene/sample details. Use the Plotly toolbar to zoom, pan, reset axes, or save a plot as a PNG.</p>
+<div class="links"><a href="volcano_interactive.html">Open interactive volcano plot</a><a href="heatmap_interactive.html">Open interactive heatmap</a><a href="pca_interactive.html">Open interactive PCA</a></div>
+<h2>What these plots suggest</h2>
+<h3>Sample structure (PCA)</h3>
+<p>The submitted static PCA shows the three young PDL20 samples grouped closely together, while the four late/RS samples are displaced from them. This is consistent with a substantial transcriptome difference between young and late samples. The RS samples also split into a PDL46/TP6 pair and a PDL50/TP7 pair, suggesting appreciable heterogeneity within the late samples. Because passage/timepoint and condition may be entangled, this split should not automatically be called a biological subtype or a technical batch effect. PC1 explained about 72.9% and PC2 about 11.3% in the original static plot; regenerated values are shown in the interactive PCA axes.</p>
+<h3>Expression heatmap</h3>
+<p>The heatmap displays row Z-scores, not absolute expression: colors indicate each gene's relative expression across the seven samples. The broad young-versus-late pattern supports group-level differences among the selected genes, while sample-specific bright cells indicate genes that vary particularly strongly in one replicate. Hover a cell to see its gene, sample, TPM, ground-truth log2 fold change, and row Z-score. The top 100 usable rows were plotted; 100 of the 100 selected ground-truth genes matched to the TPM table.</p>
+<h3>Volcano plot</h3>
+<p>The volcano plot uses the previously generated exploratory limma results from log2(TPM + 0.001). In that model, positive log2 fold change indicates higher expression in RS and negative log2 fold change indicates lower expression in RS. Top genes classified as <strong>Up in RS</strong> by adjusted p-value &lt; 0.05 and log2FC ≥ 1: FOXE1, PTCSC2, DAPK1, MEGF6, CD4, F3, GPRC5A, C1orf115. Top genes classified as <strong>Down in RS</strong> by adjusted p-value &lt; 0.05 and log2FC ≤ −1: COLEC12, VGF, EGR1, NDN, SPHK1, THNSL2, IRF6, ARMCX1. The adjusted-p-value-ranked genes in the input results include: FOXE1, PTCSC2, DAPK1, MEGF6, CD4, COLEC12, F3, GPRC5A, C1orf115, VGF, RAI2, GFRA1. Inspect all genes through hover rather than relying only on these top names. Very large fold changes can arise when expression is near zero in one group, so check per-sample TPM before biological interpretation.</p>
+<p>In the generated table, 5657 genes have adjusted p-value &lt; 0.05, including 832 meeting the additional exploratory threshold log2FC ≥ 1 and 1032 meeting log2FC ≤ −1. These are summaries of the TPM-based limma model and are not definitive count-based differential-expression results.</p>
+<h2>Scientific caveat</h2>
+<div class="note"><strong>Exploratory only.</strong> TPM values are not raw RNA-seq counts. The p-values in the volcano plot should not be presented as definitive differential-expression evidence. For formal inference, use the appropriate raw counts or estimated counts with a method such as DESeq2, edgeR, or limma-voom, and verify the sample design (including passage/timepoint and any batch variables).</div>
+<h2>Files</h2><p>All HTML files in this folder are interactive. Keep the accompanying <code>plotly.min.js</code> file beside the HTML pages so they can work offline.</p>
+</body></html>
