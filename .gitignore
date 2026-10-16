@@ -73,3 +73,17 @@ conda-bld/
 *.swo
 *.swx
 .*.sw?
+
+# Local datasets and analysis outputs — do not push
+/1_data_raw/
+
+# Original dataset if accidentally placed in the repo root
+/GSE175533_hTERT.RS.RIS.CD.TPM_table.xlsx
+
+# Generated local output and bundles
+/Rplots.pdf
+/wi38_interactive_html_project_bundle.zip
+
+# Python cache
+__pycache__/
+*.py[cod]
