@@ -10,7 +10,7 @@ The central distinction is between **sequence-associated regulatory patterns** a
 
 ## Current analysis status
 
-Progress recorded on 11 October 2026 from the project notes:
+Progress updated on 18 October 2026. Completed analyses are documented below:
 
 | Step | Status | Inputs / outputs |
 |---|---|---|
@@ -19,8 +19,8 @@ Progress recorded on 11 October 2026 from the project notes:
 | Step 2 — select benchmark regions | Done | 10,000 regions: 2,500 RS-gained, 2,500 RS-lost, 2,500 Stable, 2,500 Negative. Output `1_data_raw/2_benchmark/benchmark_10000.bed`. |
 | Step 3 — calculate experimental ground truth | Done | Experimental young/late group signals for the 10,000 regions; output `1_data_raw/2_benchmark/benchmark_10000_groundtruth.csv` (10,000 rows, 8 columns). |
 | Step 4.0 — obtain and index hg38 | Done | UCSC-style `hg38.fa` and `hg38.fa.fai` in `1_data_raw/0_reference/hg38/`. |
-| Step 4A — AlphaGenome ATAC pilot and track inventory | In progress / verify outputs | Script: `2_scripts/1_Preprocessing/4A_AlphaGenome_ATAC_pilot.py`. Inspect its log and generated output files before marking complete. |
-| Step 4B — batch predictions for all benchmark regions | Planned | Choose and document appropriate track(s), then implement checkpoints and resumable output. |
+| Step 4A — AlphaGenome ATAC pilot and track inventory | Outputs used; verify provenance before release | Script: `2_scripts/1_Preprocessing/4A_AlphaGenome_ATAC_pilot.py`. The evaluated predictions use an IMR-90 fibroblast proxy, not a senescence-specific WI-38 model. |
+| Step 4B — batch predictions for all benchmark regions | Predictions available; evaluation completed | Predictions for 10,000 regions are in `1_data_raw/3_alphagenome/02_atac_run/benchmark_10000_alphagenome_atac_pred.csv`; evaluation and class-discrimination outputs are under `3_results/tables/`. |
 
 These statuses describe the supplied project notes; rerun or inspect logs before treating them as a reproducible release.
 
@@ -35,8 +35,11 @@ Telos_NGS_Project/
 │   │   ├── 3_Benchmark_groundtruth_ATAC.py
 │   │   ├── 4A_AlphaGenome_ATAC_pilot.py
 │   │   └── utils_log.py
+│   ├── 3_Evaluation/                     # evaluation and motif-analysis scripts
 │   └── other_script_utils_used_all.txt   # local only; ignored (may contain secrets)
+├── 3_results/                           # local results and figures; check ignore rules
 ├── docs/
+│   └── 03_RESULTS_AND_INTERPRETATION.md
 ├── envs/
 ├── scripts/
 ├── 1_data_raw/                           # local only; ignored by Git
@@ -62,6 +65,10 @@ Telos_NGS_Project/
 - `2_scripts/other_script_utils_used_all.txt`, `workflow.odt`, `workings.odt`, and downloaded research PDFs are excluded by default. Put cleaned, shareable methodology into Markdown under `docs/` instead.
 - Do not copy experimental data into GitHub merely to demonstrate the workflow. Share links, accession IDs, commands, and schemas instead.
 - Before any push, inspect `git status`, `git diff --cached --stat`, and `git diff --cached`.
+
+## Results and interpretation
+
+See [Results and Interpretation](docs/03_RESULTS_AND_INTERPRETATION.md) for the benchmark design, evaluation metrics, motif findings, figures, and limitations. The summary is based on existing local outputs; verify provenance and regeneration commands before a public release.
 
 ## Important interpretation caveat
 

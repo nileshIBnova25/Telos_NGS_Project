@@ -73,3 +73,6 @@ conda-bld/
 *.swo
 *.swx
 .*.sw?
+
+# Generated TELOS analysis results (local only)
+/3_results/
