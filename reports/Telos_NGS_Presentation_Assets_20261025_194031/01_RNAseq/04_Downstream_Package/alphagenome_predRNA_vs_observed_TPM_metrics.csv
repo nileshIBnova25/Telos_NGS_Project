@@ -1,0 +1,2 @@
+predicted_column,n_genes,spearman_rho_predicted_promoter_RNA_signal_vs_log2_mean_TPM,interpretation
+pred_rna_seq_promoter_TSS_pm2kb_mean,32,0.29765395894428154,Exploratory cross-gene association only; the predicted track is not a predicted young-to-senescent fold change.

@@ -1,0 +1,4 @@
+metric,value
+Spearman correlation: DESeq2 time trend vs descriptive endpoint log2FC,0.8319338315406484
+Direction agreement fraction among genes with max endpoint TPM >= 1,0.8167910166553621
+Genes included in comparison,13269

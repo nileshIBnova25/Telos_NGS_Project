@@ -1,0 +1,15 @@
+WI-38 RNA-seq downstream package
+Workbook: /home/ibab/Sem3/BDBP307_Omics_Lab/ProjectNGS/Telos_NGS_Project/1_data_raw/GSE175533_hTERT.RS.RIS.CD.TPM_table.xlsx
+DESeq2 source sheet: RS_deseq2; gene column = gene; LFC column = log2FoldChange; adjusted p-value column = padj
+Unique tested genes after cleaning: 33487
+Increasing time trend, FDR < 0.01: 3780
+Decreasing time trend, FDR < 0.01: 3165
+Increasing time trend, FDR < 0.01 and log2FC > 0.5: 3698
+Decreasing time trend, FDR < 0.01 and log2FC < -0.5: 3097
+Background file: /home/ibab/Sem3/BDBP307_Omics_Lab/ProjectNGS/Telos_NGS_Project/1_data_raw/4_rnaseq/outputs/rnaseq_downstream_package/RS_all_tested_gene_background_FIXED.txt
+Raw TPM gene column = gene; detected PDL sample columns = 30
+Candidate trajectory rows: 660
+AlphaGenome audit: AlphaGenome comparison created using column: pred_rna_seq_promoter_TSS_pm2kb_mean. It is a cross-gene signal/expression association, not condition-specific validation.
+Caution: RS_deseq2 is a study-provided time-trend model. It is not automatically a direct PDL20 vs selected late TPM contrast.
+Caution: TPM fold changes in this package are descriptive and should not replace count-based differential-expression inference.
+Caution: AlphaGenome predicted RNA tracks are sequence-based predictions for a selected model track/biosample; they are not observed WI-38 young/late expression tracks.

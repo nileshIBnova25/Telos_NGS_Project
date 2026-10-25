@@ -1,0 +1,10 @@
+sheet_name,reported_max_row,reported_max_column,header_count
+readme,,4,4
+RS_TC_raw_TPM,,31,31
+RS_TC_batch_corrected_TPM,,31,31
+hTERT_TPM,,19,19
+CD_TPM,,31,31
+RIS_TPM,,19,19
+RS_deseq2,,6,6
+RIS_deseq2,,6,6
+CD_deseq2,,7,7

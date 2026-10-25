@@ -1,0 +1,9 @@
+plot,metric,value
+volcano,genes in result,12838.0
+volcano,adjusted p < 0.05,5657.0
+volcano,up in RS (adj p < 0.05 and log2FC >= 1),832.0
+volcano,down in RS (adj p < 0.05 and log2FC <= -1),1032.0
+heatmap,matched selected genes,100.0
+heatmap,genes plotted,100.0
+PCA,PC1 variance percent,72.91
+PCA,PC2 variance percent,11.26

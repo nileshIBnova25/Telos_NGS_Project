@@ -1,0 +1,5 @@
+Official references (checked 2026-10-13):
+- AlphaGenome GitHub / README: https://github.com/google-deepmind/alphagenome
+- Installation docs: https://github.com/google-deepmind/alphagenome/blob/main/docs/source/installation.md
+- Quick-start and interval prediction examples: https://google-deepmind-alphagenome.readthedocs-hosted.com/colabs/v1/quick_start.html
+- Output metadata: https://google-deepmind-alphagenome.readthedocs-hosted.com/exploring_model_metadata.html

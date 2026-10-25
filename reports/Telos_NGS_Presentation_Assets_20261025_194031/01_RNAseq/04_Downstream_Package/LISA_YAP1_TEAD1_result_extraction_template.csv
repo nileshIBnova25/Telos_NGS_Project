@@ -1,0 +1,5 @@
+gene_set,regulator,rank,p_value,adjusted_p_value,dataset_or_track_label_from_LISA,notes
+Increasing_over_time,YAP1,NA,NA,NA,NA,Fill from the downloaded LISA detailed results; do not infer rank/p-value from plot labels alone.
+Increasing_over_time,TEAD1,NA,NA,NA,NA,Fill from the downloaded LISA detailed results; do not infer rank/p-value from plot labels alone.
+Decreasing_over_time,YAP1,NA,NA,NA,NA,Fill from the downloaded LISA detailed results; do not infer rank/p-value from plot labels alone.
+Decreasing_over_time,TEAD1,NA,NA,NA,NA,Fill from the downloaded LISA detailed results; do not infer rank/p-value from plot labels alone.

@@ -1,0 +1,2 @@
+input_file,n_genes_total,n_genes_young_tpm_gt1,n_genes_rs_tpm_gt1,n_genes_tpm_gt1_both_groups,n_genes_zero_tpm_both_groups,n_missing_log2FC,median_young_tpm,median_rs_tpm,median_log2FC,n_log2FC_positive,n_log2FC_negative,n_log2FC_zero
+/home/ibab/Sem3/BDBP307_Omics_Lab/ProjectNGS/Telos_NGS_Project/1_data_raw/4_rnaseq/outputs/rnaseq_groundtruth_wi38_young_vs_rs.csv,33514,12706,12719,12138,8913,0,0.1059647633333333,0.128113875,0.0,12029,12572,8913
