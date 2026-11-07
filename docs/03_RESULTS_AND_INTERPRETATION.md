@@ -4,7 +4,7 @@
 
 Predicting regulatory activity from DNA sequence remains challenging when the regulatory landscape changes with cellular state. TELOS evaluates AlphaGenome's predicted ATAC-seq signal against experimentally observed chromatin accessibility in WI-38 fibroblasts undergoing replicative senescence. We constructed a benchmark of 10,000 genomic regions comprising senescence-associated gained and lost regions, stable accessible regions, and synthetic negative controls. Predicted and experimental signals were matched by genomic coordinates and evaluated using correlation, class discrimination, motif-score analysis, and chromosome-grouped cross-validation.
 
-Across the benchmark, AlphaGenome predictions showed moderate rank agreement with experimental signal, with Spearman correlations of 0.606 for young cells and 0.676 for senescent cells. Discrimination was stronger for stable regions and synthetic negatives than for senescence-associated gained and lost regions. Exploratory chromosome-grouped validation showed a modest improvement when the AlphaGenome prediction was added to the young-state experimental signal model, increasing out-of-fold R-squared from 0.290 to 0.316. Motif analysis identified sequence-pattern associations, including an association between TEAD1 motif-score excess and the gained-region class, that may motivate further investigation.
+Across the benchmark, AlphaGenome predictions showed moderate rank agreement with experimental signal, with Spearman correlations of 0.606 for young cells and 0.676 for senescent cells. Discrimination was stronger for stable regions and synthetic negatives than for senescence-associated gained and lost regions. Exploratory chromosome-grouped validation showed a modest improvement when the AlphaGenome prediction was added to the young-state experimental signal model, increasing out-of-fold R-squared from 0.290 to 0.316. Motif analysis identified sequence-pattern associations, including an association between TEAD1 motif-score excess and the gained-region class. An exploratory integration of significant RNA-seq results with ATAC-associated genes found substantially higher direction concordance for genes linked exclusively to RS-gained regions; this association persisted in chromosome- and genomic-block-stratified permutation sensitivity analyses.
 
 These findings indicate that AlphaGenome predictions provide useful but limited agreement with experimental regulatory signals in this selected benchmark. They do not establish direct prediction of senescence-associated changes, transcription-factor binding, or causal regulatory mechanisms. Independent validation and state-specific evidence are needed to assess generalizability and biological relevance.
 
@@ -130,6 +130,58 @@ Outputs:
 - `3_results/tables/change_association/chromosome_grouped_cv_by_class.csv`
 - `3_results/tables/change_association/chromosome_grouped_cv_predictions.csv`
 
+
+## 5B. ATAC–RNA integration and direction concordance
+
+### Integration and analysis population
+
+Experimental ATAC-region effects were integrated with a batch-adjusted RNA-seq time-course analysis. Associations were retained when the RNA result had an adjusted p-value below 0.05 and the gene identifier mapped unambiguously to a unique gene symbol. Direction concordance was defined by matching the sign of the observed ATAC log2 fold change to the sign of the RNA log2 fold change. Zero-effect associations were excluded from direction-based tests.
+
+The integration produced 3,181 directionally classifiable region–gene associations involving 3,033 distinct ATAC regions and 2,088 unique genes. For the single-class gene sensitivity analysis, genes linked to multiple ATAC classes were excluded. The resulting analysis included 1,675 genes: 347 Negative, 171 RS-gained, 474 RS-lost, and 683 Stable. Each gene contributed one binary direction-concordance outcome.
+
+### Single-class gene concordance
+
+| ATAC class | Genes | Concordant | Concordance | 95% Wilson confidence interval |
+|---|---:|---:|---:|---:|
+| Negative | 347 | 192 | 55.33% | 50.07–60.48% |
+| RS-gained | 171 | 143 | 83.63% | 77.35–88.42% |
+| RS-lost | 474 | 273 | 57.59% | 53.10–61.97% |
+| Stable | 683 | 342 | 50.07% | 46.33–53.81% |
+
+The RS-gained group showed a 29.97-percentage-point higher concordance rate than all other classes combined (83.63% versus 53.66%). Exploratory Fisher exact comparisons also found higher odds of concordance for RS-gained genes than for Negative, RS-lost, and Stable genes. These comparisons are based on the same selected dataset and should not be considered independent replications.
+
+### Chromosome-stratified permutation sensitivity analysis
+
+A chromosome-stratified permutation test preserved the observed class counts within each chromosome while randomizing class assignments. The observed concordance outcomes were held fixed. Across 20,000 permutations, the RS-gained concordance advantage remained pronounced relative to Negative, RS-lost, Stable, and all other classes combined. The empirical one-sided p-value was 0.00005 for each comparison after the add-one correction; this is the minimum reportable p-value with 20,000 permutations, rather than an estimate of the exact underlying probability.
+
+### Spatial-block permutation sensitivity analysis
+
+To assess whether broad genomic location alone could explain the association, a second analysis shuffled class labels within chromosome-specific 5 Mb and 10 Mb blocks. Each gene was assigned to a block using the midpoint of its full annotation span; the full span was used where multiple annotation intervals existed for the same gene. Each permutation preserved class counts within each block and retained the observed gene-level concordance outcomes.
+
+| Comparison | Observed difference | 5 Mb BH-adjusted p-value | 10 Mb BH-adjusted p-value |
+|---|---:|---:|---:|
+| RS-gained vs Negative | +28.29 percentage points | 0.00310 | 0.00005 |
+| RS-gained vs RS-lost | +26.03 percentage points | 0.000067 | 0.00005 |
+| RS-gained vs Stable | +33.55 percentage points | 0.000067 | 0.00005 |
+| RS-gained vs all other classes | +29.97 percentage points | 0.000067 | 0.00005 |
+
+The four p-values were adjusted using the Benjamini–Hochberg procedure separately within each block-size analysis. Empirical p-values used 20,000 permutations and an add-one correction. Values of 0.00005 represent the permutation-resolution floor, not exact probabilities.
+
+The persistence of the RS-gained association under these chromosome- and block-stratified procedures suggests that broad genomic location and class composition alone do not readily explain the observed difference. However, these tests do not eliminate fine-scale spatial dependence, shared regulatory elements, gene-network relationships, or other sources of biological dependence. The two block sizes and chromosome-stratified analysis are sensitivity analyses of the same data, not independent validation.
+
+### Interpretation and limitations
+
+The results indicate a strong association between membership in the RS-gained class and agreement between ATAC and RNA effect directions among genes linked exclusively to one ATAC class. They do not demonstrate that ATAC changes cause expression changes, that every linked region regulates its associated gene, or that the result generalizes to independent datasets. The RNA coefficient represents a batch-adjusted continuous time-course association, not a direct young-versus-senescent contrast. Significance-based RNA selection, the benchmark construction, gene-to-region mapping, and possible dependence among observations should be considered when interpreting the findings.
+
+Key outputs:
+
+- `3_results/tables/integration/atac_rnaseq_direction_concordance_associations.csv`
+- `3_results/tables/integration/atac_rnaseq_single_class_gene_concordance_v2.csv`
+- `3_results/tables/integration/atac_rnaseq_single_class_gene_concordance_v2_summary.csv`
+- `3_results/tables/integration/atac_rnaseq_single_class_gene_concordance_v2_tests.csv`
+- `3_results/tables/integration/atac_rnaseq_chromosome_stratified_permutation.csv`
+- `3_results/tables/integration/atac_rnaseq_spatial_block_permutation.csv`
+
 ## 6. Limitations
 
 1. The benchmark uses selected experimental extremes, threshold-selected stable peaks, and synthetic negative controls; it is not representative of all genomic regions.
@@ -141,7 +193,7 @@ Outputs:
 
 ## 7. Conclusion
 
-In this selected WI-38 replicative-senescence benchmark, AlphaGenome predictions showed moderate overall rank agreement with experimental ATAC-seq signal, with higher agreement against the senescent group mean than against the young group mean. Discrimination was strongest for stable regions and synthetic negative controls, while separation of gained and lost regions was weak. Motif-score analysis identified several class-associated sequence patterns, including a TEAD1 association with gained regions, that may motivate further biological investigation. These findings support a targeted evaluation of the strengths and limitations of sequence-based regulatory prediction; they do not show that AlphaGenome directly predicts senescence or establish a causal YAP1/TEAD mechanism.
+In this selected WI-38 replicative-senescence benchmark, AlphaGenome predictions showed moderate overall rank agreement with experimental ATAC-seq signal, with higher agreement against the senescent group mean than against the young group mean. Discrimination was strongest for stable regions and synthetic negative controls, while separation of gained and lost regions was weak. Motif-score analysis identified several class-associated sequence patterns, including a TEAD1 association with gained regions, that may motivate further biological investigation. The exploratory ATAC–RNA integration additionally found higher direction concordance among genes linked exclusively to RS-gained regions, a pattern that persisted under chromosome- and spatial-block-stratified permutation sensitivity analyses. This is an association within the selected dataset, not evidence of causal regulation or independent validation. Overall, the findings support a targeted evaluation of the strengths and limitations of sequence-based regulatory prediction; they do not show that AlphaGenome directly predicts senescence or establish a causal YAP1/TEAD mechanism.
 
 ## 8. Reproducibility note
 

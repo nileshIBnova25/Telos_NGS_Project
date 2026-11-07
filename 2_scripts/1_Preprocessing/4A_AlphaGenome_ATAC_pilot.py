@@ -30,7 +30,13 @@ from alphagenome.data import genome
 #----------------------------------------------------------#
 
 #------------------------Data-Loading------------------------#
-IN_DIR = "/home/ibab/1_POJECTS/Telos_NGS_Project/1_data_raw"
+
+# Resolve the project root relative to this script
+PROJECT_ROOT = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "..")
+)
+
+IN_DIR = os.path.join(PROJECT_ROOT, "1_data_raw")
 
 BENCHMARK_DIR = os.path.join(IN_DIR, "2_benchmark")
 
@@ -38,11 +44,20 @@ AG_BASE_DIR = os.path.join(IN_DIR, "3_alphagenome")
 OUT_DIR = os.path.join(AG_BASE_DIR, "00_pilot")
 LOG_DIR = os.path.join(OUT_DIR, "logs")
 
-BENCH_BED = os.path.join(BENCHMARK_DIR, "benchmark_10000.bed")
-CHROM_SIZES = os.path.join(BENCHMARK_DIR, "hg38.chrom.sizes.from_bw.txt")
+BENCH_BED = os.path.join(
+    BENCHMARK_DIR, "benchmark_10000.bed"
+)
 
-HG38_FASTA = os.path.join(IN_DIR, "0_reference/hg38/hg38.fa")
+CHROM_SIZES = os.path.join(
+    BENCHMARK_DIR, "hg38.chrom.sizes.from_bw.txt"
+)
+
+HG38_FASTA = os.path.join(
+    IN_DIR, "0_reference", "hg38", "hg38.fa"
+)
+
 #-----------------------------------------------------------#
+
 PILOT_LABEL = "RS_gained"
 SEQUENCE_LENGTH = 16384  # pilot context
 

@@ -32,29 +32,47 @@ from utils_log import setup_logger, write_done_marker
 
 
 #------------------------Data-Loading------------------------#
-IN_DIR   = "/home/ibab/1_POJECTS/Telos_NGS_Project/1_data_raw"
-OUT_DIR  = os.path.join(IN_DIR, "2_benchmark")
-RAW_DIR  = os.path.join(IN_DIR, "GSE175533_RAW")
 
-IN_CSV   = os.path.join(IN_DIR, "1_preprocessing_and_intermediate/atac_atlas_with_signal.csv")
+# Resolve the project root relative to this script
+PROJECT_ROOT = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "..")
+)
+
+IN_DIR = os.path.join(PROJECT_ROOT, "1_data_raw")
+OUT_DIR = os.path.join(IN_DIR, "2_benchmark")
+RAW_DIR = os.path.join(IN_DIR, "GSE175533_RAW")
+
+IN_CSV = os.path.join(
+    IN_DIR,
+    "1_preprocessing_and_intermediate",
+    "atac_atlas_with_signal.csv"
+)
+
 ATLAS_GZ = os.path.join(IN_DIR, "GSE175533_atlas.bed.gz")
 
-CHROM_SIZES = os.path.join(OUT_DIR, "hg38.chrom.sizes.from_bw.txt")
-ATLAS_EXCL  = os.path.join(OUT_DIR, "atlas_exclude.bed")
+CHROM_SIZES = os.path.join(
+    OUT_DIR,
+    "hg38.chrom.sizes.from_bw.txt"
+)
 
-BW_FOR_CHROMS = os.path.join(RAW_DIR, "GSM5341071_PDL20_TP1_omni_A_S4_R1_001.filter.rmdup.bw")
+ATLAS_EXCL = os.path.join(OUT_DIR, "atlas_exclude.bed")
+
+BW_FOR_CHROMS = os.path.join(
+    RAW_DIR,
+    "GSM5341071_PDL20_TP1_omni_A_S4_R1_001.filter.rmdup.bw"
+)
 
 N = 2500  # 4 bins * 2500 = 10000
 
-# selection params (keep simple)
-MAX_SIGNAL_KEEP_QUANTILE = 0.50   # keep top 50% peaks by max(young_mean, rs_mean)
+# Selection parameters
+MAX_SIGNAL_KEEP_QUANTILE = 0.50
 STABLE_ABS_LOG2FC = 0.25
 
 OUT_BED = os.path.join(OUT_DIR, "benchmark_10000.bed")
 DONE_MARKER = os.path.join(OUT_DIR, "benchmark_10000.done.txt")
 LOG_DIR = os.path.join(OUT_DIR, "logs")
-#-----------------------------------------------------------#
 
+#-----------------------------------------------------------#
 
 def require_bedtools(logger):
     try:

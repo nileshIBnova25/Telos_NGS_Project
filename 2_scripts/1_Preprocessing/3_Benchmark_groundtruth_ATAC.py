@@ -27,15 +27,23 @@ from utils_log import setup_logger, write_done_marker
 #--------------------------------------------------------------------------------#
 
 #------------------------Data-Loading------------------------#
-IN_DIR   = "/home/ibab/1_POJECTS/Telos_NGS_Project/1_data_raw"
-OUT_DIR  = os.path.join(IN_DIR, "2_benchmark")
-RAW_DIR  = os.path.join(IN_DIR, "GSE175533_RAW")
+
+# Resolve the project root relative to this script
+PROJECT_ROOT = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "..")
+)
+
+IN_DIR = os.path.join(PROJECT_ROOT, "1_data_raw")
+OUT_DIR = os.path.join(IN_DIR, "2_benchmark")
+RAW_DIR = os.path.join(IN_DIR, "GSE175533_RAW")
 
 BENCH_BED = os.path.join(OUT_DIR, "benchmark_10000.bed")
-OUT_CSV   = os.path.join(OUT_DIR, "benchmark_10000_groundtruth.csv")
+OUT_CSV = os.path.join(OUT_DIR, "benchmark_10000_groundtruth.csv")
 
-DONE_MARKER = os.path.join(OUT_DIR, "benchmark_10000_groundtruth.done.txt")
-LOG_DIR     = os.path.join(OUT_DIR, "logs")
+DONE_MARKER = os.path.join(
+    OUT_DIR, "benchmark_10000_groundtruth.done.txt"
+)
+LOG_DIR = os.path.join(OUT_DIR, "logs")
 
 EPS = 1e-3
 
@@ -44,12 +52,14 @@ young_filenames = [
     "GSM5341072_PDL20_TP1_omni_B_S5_R1_001.filter.rmdup.bw",
     "GSM5341073_PDL20_TP1_omni_C_S6_R1_001.filter.rmdup.bw",
 ]
+
 rs_filenames = [
     "GSM5341086_PDL46_TP6_omni_A_S42_R1_001.filter.rmdup.bw",
     "GSM5341087_PDL46_TP6_omni_B_S43_R1_001.filter.rmdup.bw",
     "GSM5341088_PDL50_TP7_omni_A_S48_R1_001.filter.rmdup.bw",
     "GSM5341089_PDL50_TP7_omni_B_S49_R1_001.filter.rmdup.bw",
 ]
+
 #-----------------------------------------------------------#
 
 def mean_signal(bw_path, regions):
