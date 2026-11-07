@@ -29,7 +29,7 @@
 *.parquet
 *.xlsx
 
-# Local research notes / downloaded papers (keep references in docs instead)
+# Local research notes / downloaded papers
 /Research_paper/
 /workflow.odt
 /workings.odt
@@ -64,6 +64,12 @@ conda-bld/
 /output/
 /outputs/
 /results/
+/3_results/
+/Rplots.pdf
+/wi38_interactive_html_project_bundle.zip
+
+# Original dataset if placed in repository root
+/GSE175533_hTERT.RS.RIS.CD.TPM_table.xlsx
 
 # LibreOffice lock files
 .~lock.*#
@@ -73,6 +79,3 @@ conda-bld/
 *.swo
 *.swx
 .*.sw?
-
-# Generated TELOS analysis results (local only)
-/3_results/
